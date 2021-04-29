@@ -1,14 +1,17 @@
 {
   "name": "limiteapi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node --inspect --trace-warnings src/app.js",
+    "main": "node src/app.js"
   },
   "author": "Frozox#4545",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.12.6"
   }
 }
