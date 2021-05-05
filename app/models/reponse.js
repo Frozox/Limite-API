@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const reponseSchema = new Schema({
-    _id: Number,
+    reponse_id: Number,
     texte: String
-});
+},{collection: 'reponse'});
 
 module.exports = mongoose.model('Reponse', reponseSchema);

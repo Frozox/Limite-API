@@ -11,10 +11,10 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(require('./app/routes'));
+app.use(require('./app/routes/routes'));
 
 mongoose
-    .connect(conf.DB_CON_STRING, {useNewUrlParser: true, useUnifiedTopology: true})
+    .connect(conf.DB_CON_STRING, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true})
     .then(() => {
         app.listen(conf.API_PORT, () => {   //L'API ecoute sur le port
             console.log(`API listening on port :${conf.API_PORT}`)

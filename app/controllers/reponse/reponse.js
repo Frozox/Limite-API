@@ -14,16 +14,16 @@ module.exports = {
             })
             .catch((error) => {
                 res.status(500).send(error);
-            });
+        });
     },
     findById : async (req, res) => {
         var id = req.params.id;
-        await Reponse.findOne({_id : id})
+        await Reponse.findOne({reponse_id : id})
             .then((result) => {
                 res.json(result);
             })
             .catch((error) => {
                 res.status(500).send(error);
-            });
+        });
     }
 }

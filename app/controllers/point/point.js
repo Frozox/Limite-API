@@ -8,13 +8,15 @@ module.exports = {
 
     },
     find : async (req, res) => {
-        await Point.find()
+        await Point.find({})
+            .populate('server_id')
             .then((result) => {
                 res.json(result);
             })
             .catch((error) => {
+                console.log(error);
                 res.status(500).send(error);
-            });
+        });
     },
     findById : async (req, res) => {
         var id = req.params.id;
@@ -24,6 +26,6 @@ module.exports = {
             })
             .catch((error) => {
                 res.status(500).send(error);
-            });
+        });
     }
 }
