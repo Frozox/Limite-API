@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(require('./app/routes/routes'));
 
 mongoose
-    .connect(conf.DB_CON_STRING, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true})
+    .connect(conf.DB_CON_STRING, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false})
     .then(() => {
         app.listen(conf.API_PORT, () => {   //L'API ecoute sur le port
             console.log(`API listening on port :${conf.API_PORT}`)
