@@ -30,11 +30,11 @@ router.get('/serveur/find', Serveur.find);
 router.get('/serveur/find/:id', Serveur.findById);
 
 //Point Route
-router.post('/point/create', Point.create);
-router.delete('/point/delete/:id', Point.delete);
-router.patch('/point/update/:id', Point.update);
-router.get('/point/find', Point.find);
-router.get('/point/find/:id', Point.findById);
+router.patch('/point/addwin/:server_id/:user_id', Point.addWin);
+router.patch('/point/addloose/:server_id/:user_id', Point.addLoose);
+router.patch('/point/remwin/:server_id/:user_id', Point.remWin);
+router.patch('/point/remloose/:server_id/:user_id', Point.remLoose);
+router.get('/point/find/:server_id/:user_id', Point.findPoint);
 
 //User Route
 router.post('/user/create', User.create);

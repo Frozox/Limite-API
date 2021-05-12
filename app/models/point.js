@@ -8,6 +8,6 @@ const pointSchema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: 'User'}
 },{collection: 'point'});
 
-pointSchema.index({server: 1, user: 1}, {unique: true})
+pointSchema.index({server: 1, user: 1}, {unique: true});
 
 module.exports = mongoose.model('Point', pointSchema);

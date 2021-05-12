@@ -4,7 +4,8 @@ const User = require('../../models/user');
 
 module.exports = {
     create : async (req, res) => {
-        await new Serveur(req.body).save().then((result) => {
+        //Add Serveur
+        await new Serveur(req.body).save().then(() => {
             res.status(200).json({message: 'Server added.'});
         }).catch((err) => {
             res.status(500).json({message: 'Server already exist or invalid parameters.'});
@@ -12,25 +13,32 @@ module.exports = {
     },
     delete : async (req, res) => {
         //Rem Serveur
-        await Serveur.findById(req.params.id).then(() => {
-            
-            //Rem Point
-            Point.find({server: req.params.id}).then((result) => {
-                res.status(200).json(result);
-            })
+        const server = await Serveur.findByIdAndDelete(req.params.id);
+        
+        if(server){
 
-            //Rem Members Points
-            /*User.findById({$in: server.members}).then((result) => {
-                res.status(200).json(result);
-            }).catch((err) => {
-                res.status(500).send(err);
-            })*/
-        }).catch((err) => {
-            res.status(500).send(err);
-        });
+            //Find Point/User
+            await Point.find({server: req.params.id}).then((points) => {
+                points.forEach(point => {
+
+                    //Rem Point to User
+                    User.findByIdAndUpdate(point.user, {
+                        $pull: {points: point._id}
+                    }).exec();
+                });
+            });
+
+            //Rem Point
+            await Point.deleteMany({server: req.params.id}).exec();
+
+            res.status(200).json({message: 'Server deleted.'});
+        }
+        else{
+            res.status(404).json({message: 'Server does not exist or invalid parameters.'});
+        }
     },
     addMember : async (req, res) => {
-        //Add Member to Serveur
+        //Add User to Serveur
         await Serveur.findByIdAndUpdate(req.params.server_id, {
             $addToSet: {members: req.params.user_id}
         }).then(() => {
@@ -56,7 +64,7 @@ module.exports = {
     },
     delMember : async (req, res) => {
 
-        //Rem Member to Serveur
+        //Rem User to Serveur
         await Serveur.findByIdAndUpdate(req.params.server_id, {
             $pull: {members: req.params.user_id}
         }).then(() => {
@@ -82,19 +90,29 @@ module.exports = {
     find : async (req, res) => {
         await Serveur.find()
             .then((result) => {
-                res.status(200).json(result);
+                if(result.length == 0){
+                    res.status(404).json({message: 'Servers not found.'});
+                }
+                else{
+                    res.status(200).json(result);
+                }
             })
-            .catch((err) => {
-                res.status(500).send('Servers not found, invalid parameters.');
+            .catch(() => {
+                res.status(500).json({message: 'Invalid parameters.'});
         });
     },
     findById : async (req, res) => {
         await Serveur.findById(req.params.id)
             .then((result) => {
-                res.status(200).json(result);
+                if(result == null){
+                    res.status(404).json({message: 'Server not found.'});
+                }
+                else{
+                    res.status(200).json(result);
+                }
             })
-            .catch((err) => {
-                res.status(500).json({message: 'Server not found, invalid parameters.'});
+            .catch(() => {
+                res.status(500).json({message: 'Invalid parameters.'});
         });
     }
 }

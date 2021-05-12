@@ -7,7 +7,7 @@ const serveurSchema = new Schema({
     nb_cartes: { type: Number, default: 7 },
     nb_win: { type: Number, default: 5 },
     max_players: { type: Number, default: 9 },
-    members: [{ type: Schema.Types.ObjectId, ref: 'User', unique: true }]
+    members: [{ type: Schema.Types.ObjectId, ref: 'User' }]
 },{collection: 'serveur'});
 
 module.exports = mongoose.model('Serveur', serveurSchema);

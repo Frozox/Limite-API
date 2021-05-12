@@ -4,46 +4,71 @@ const Serveur = require('../../models/serveur');
 
 module.exports = {
     create : async (req, res) => {
-        await new User(req.body).save().then((result) => {
-            res.json(result);
-        })
-        .catch((err) => {
-            console.log(err)
-            res.status(500).send(err);
+        await new User(req.body).save().then(() => {
+            res.status(200).json({message: 'User added.'});
+        }).catch(() => {
+            res.status(500).json({message: 'User already exist or invalid parameters.'});
         })
     },
     delete : async (req, res) => {
-        if(!await User.findByIdAndDelete(req.params.id)) {
-            res.status(404).send('Utilisateur introuvable.');
+        const user = await User.findByIdAndDelete(req.params.id);
+
+        if(user) {
+
+            //Find Point/Serveur
+            await Point.find({user: req.params.id}).then((points) => {
+                points.forEach(point => {
+
+                    //Rem User to Serveur
+                    Serveur.findByIdAndUpdate(point.server, {
+                        $pull: {members: req.params.id}
+                    }).exec();
+                })
+            });
+
+            //Rem Point
+            await Point.deleteMany({user: req.params.id}).exec();
+
+            res.status(200).json({message: 'User deleted.'});
         }
-        res.status(200).send();
+        else{
+            res.status(404).json({message: 'User does not exist or invalid parameters.'});
+        }
     },
     update : async (req, res) => {
-        await User.findByIdAndUpdate(req.params.id, req.body).then((result) => {
-            res.json(result);
+        await User.findByIdAndUpdate(req.params.id, req.body).then(() => {
+            res.status(500).json({message: 'User updated.'});
         })
         .catch((err) => {
-            res.status(500).send(err);
+            res.status(500).json({message: 'Update failed. Invalid parameters.'});
         });
     },
     find : async (req, res) => {
         await User.find()
-            .populate('points.server')
             .then((result) => {
-                res.json(result);
+                if(result.length == 0){
+                    res.status(404).json({message: 'Users not found.'});
+                }
+                else{
+                    res.status(200).json(result);
+                }
             })
-            .catch((err) => {
-                console.log(err);
-                res.status(500).send(err);
+            .catch(() => {
+                res.status(500).json({message: 'Invalid parameters.'});
         });
     },
     findById : async (req, res) => {
         await User.findById(req.params.id)
             .then((result) => {
-                res.json(result);
+                if(result == null){
+                    res.status(404).json({message: 'User not found.'});
+                }
+                else{
+                    res.status(200).json(result);
+                }
             })
-            .catch((err) => {
-                res.status(500).send(err);
+            .catch(() => {
+                res.status(500).json({message: 'Invalid parameters.'});
         });
     }
 }

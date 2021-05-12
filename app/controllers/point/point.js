@@ -1,39 +1,54 @@
 const Point = require('../../models/point');
 
 module.exports = {
-    create : async (req, res) => {
-        await new Point(req.body).save().then((result) => {
-            res.json(result);
-        })
-        .catch((err) => {
-            res.status(500).send(err);
-        })
-    },
-    delete : async (req, res) => {
-        if(!await Point.findByIdAndDelete(req.params.id)) {
-            res.status(404).send('Point introuvable.');
-        }
-        res.status(200).send();
-    },
-    update : async (req, res) => {
-        await Point.findByIdAndUpdate(req.params.id, req.body)
-    },
-    find : async (req, res) => {
-        await Point.find()
-            .then((result) => {
-                res.json(result);
-            })
-            .catch((err) => {
-                res.status(500).send(err);
+    addWin : async (req, res) => {
+        await Point.findOneAndUpdate({server: req.params.server_id, user: req.params.user_id}, {
+            $inc: {win: 1}
+        }).then(() => {
+            res.status(200).json({message: 'Win added to User.'});
+        }).catch(() => {
+            res.status(500).json({message: 'Invalid parameters.'});
         });
     },
-    findById : async (req, res) => {
-        await Point.findById(req.params.id)
+    addLoose : async (req, res) => {
+        await Point.findOneAndUpdate({server: req.params.server_id, user: req.params.user_id}, {
+            $inc: {loose: 1}
+        }).then(() => {
+            res.status(200).json({message: 'Loose added to User.'});
+        }).catch(() => {
+            res.status(500).json({message: 'Invalid parameters.'});
+        });
+    },
+    remWin : async (req, res) => {
+        await Point.findOneAndUpdate({server: req.params.server_id, user: req.params.user_id}, {
+            $inc: {win: -1}
+        }).then(() => {
+            res.status(200).json({message: 'Win removed to User.'});
+        }).catch(() => {
+            res.status(500).json({message: 'Invalid parameters.'});
+        });
+    },
+    remLoose : async (req, res) => {
+        await Point.findOneAndUpdate({server: req.params.server_id, user: req.params.user_id}, {
+            $inc: {loose: -1}
+        }).then(() => {
+            res.status(200).json({message: 'Loose removed to User.'});
+        }).catch(() => {
+            res.status(500).json({message: 'Invalid parameters.'});
+        });
+    },
+    findPoint : async (req, res) => {
+        await Point.findOne({server: req.params.server_id, user: req.params.user_id})
             .then((result) => {
-                res.json(result);
+                if(result == null){
+                    res.status(404).json({message: 'Point not found.'});
+                }
+                else{
+                    res.status(200).json(result);
+                }
             })
-            .catch((err) => {
-                res.status(500).send(err);
+            .catch(() => {
+                res.status(500).json({message: 'Invalid parameters.'});
         });
     }
 }
