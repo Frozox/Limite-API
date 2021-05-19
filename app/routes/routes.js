@@ -30,10 +30,8 @@ router.get('/serveur/find', Serveur.find);
 router.get('/serveur/find/:id', Serveur.findById);
 
 //Point Route
-router.patch('/point/addwin/:server_id/:user_id', Point.addWin);
-router.patch('/point/addloose/:server_id/:user_id', Point.addLoose);
-router.patch('/point/remwin/:server_id/:user_id', Point.remWin);
-router.patch('/point/remloose/:server_id/:user_id', Point.remLoose);
+router.patch('/point/addwin/:id', Point.addWin);
+router.patch('/point/remwin/:id', Point.remWin);
 router.get('/point/find/:server_id/:user_id', Point.findPoint);
 
 //User Route

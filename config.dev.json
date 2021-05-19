@@ -1,4 +1,8 @@
 {
     "API_PORT": 8080,
-    "DB_CON_STRING": "mongodb://localhost:27017/mydatabase"
+    "DB_CON_STRING": "mongodb://localhost:27017/mydatabase",
+    "DEFAULT_PREFIX": "l!",
+    "DEFAULT_DECK": 7,
+    "DEFAULT_ROUNDS_TO_WIN": 5,
+    "DEFAULT_MAX_PLAYERS": 8
 }
