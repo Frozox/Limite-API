@@ -2,29 +2,35 @@ const Point = require('../../models/point');
 
 module.exports = {
     addWin : async (req, res) => {
-        await Point.findByIdAndUpdate(req.params.id, {
+        const point = await Point.findByIdAndUpdate(req.params.id, {
             $inc: {win: 1}
-        }).then(() => {
+        })
+        
+        if(point){
             res.status(200).json({message: 'Win added to User.'});
-        }).catch(() => {
+        }
+        else{
             res.status(500).json({message: 'Invalid parameters.'});
-        });
+        }
     },
     remWin : async (req, res) => {
-        await Point.findByIdAndUpdate(req.params.id, {
+        const point = await Point.findByIdAndUpdate(req.params.id, {
             $inc: {win: -1}
-        }).then(() => {
-            res.status(200).json({message: 'Win removed to User.'});
-        }).catch(() => {
-            res.status(500).json({message: 'Invalid parameters.'});
         });
+        
+        if(point){
+            res.status(200).json({message: 'Win removed to User.'});
+        }
+        else{
+            res.status(500).json({message: 'Invalid parameters.'});
+        }
     },
     /*setWin : async (req, res) => {
     },
     resetWin : async (req, res) => {
     },*/
     findPoint : async (req, res) => {
-        await Point.findOne({server: req.params.server_id, user: req.params.user_id})
+        await Point.findOne({server: req.params.server_id, user: req.params.user_id}, {__v:0})
             .then((result) => {
                 if(result == null){
                     res.status(404).json({message: 'Point not found.'});

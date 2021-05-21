@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const pointSchema = new Schema({
-    win: { type: Number, default: 0 },
+    win: { type: Number, min: 0, default: 0 },
     server: { type: Schema.Types.ObjectId, ref: 'Serveur'},
     user: { type: Schema.Types.ObjectId, ref: 'User'}
 },{collection: 'point'});

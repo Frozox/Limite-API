@@ -44,7 +44,7 @@ module.exports = {
         });
     },
     find : async (req, res) => {
-        await User.find()
+        await User.find({},{__v:0})
             .then((result) => {
                 if(result.length == 0){
                     res.status(404).json({message: 'Users not found.'});
@@ -58,7 +58,7 @@ module.exports = {
         });
     },
     findById : async (req, res) => {
-        await User.findById(req.params.id)
+        await User.findById(req.params.id, {__v:0})
             .then((result) => {
                 if(result == null){
                     res.status(404).json({message: 'User not found.'});

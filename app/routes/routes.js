@@ -10,15 +10,15 @@ const User = require('../controllers/user/user');
 router.get('/', (req, res) => res.send({'content': "Bienvenu sur l'API LimiteJs"}))
 
 //Question Route
-router.post('/question/create', Question.create);
+/*router.post('/question/create', Question.create);
 router.delete('/question/delete', Question.delete);
 router.get('/question/find', Question.find);
-router.get('/question/find/:id', Question.findById);
+router.get('/question/find/:id', Question.findById);*/
 
 //Reponse Route
 router.post('/reponse/create', Reponse.create);
-router.delete('/reponse/delete', Reponse.delete);
-router.get('/reponse/find', Reponse.find);
+router.delete('/reponse/delete/:id', Reponse.delete);
+router.get('/reponse/findrandomly', Reponse.findRandomly);
 router.get('/reponse/find/:id', Reponse.findById);
 
 //Serveur Route

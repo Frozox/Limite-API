@@ -88,7 +88,7 @@ module.exports = {
         });
     },
     find : async (req, res) => {
-        await Serveur.find()
+        await Serveur.find({},{ __v:0})
             .then((result) => {
                 if(result.length == 0){
                     res.status(404).json({message: 'Servers not found.'});
@@ -102,7 +102,7 @@ module.exports = {
         });
     },
     findById : async (req, res) => {
-        await Serveur.findById(req.params.id)
+        await Serveur.findById(req.params.id, { __v:0})
             .then((result) => {
                 if(result == null){
                     res.status(404).json({message: 'Server not found.'});
