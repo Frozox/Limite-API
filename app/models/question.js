@@ -3,8 +3,16 @@ const Schema = mongoose.Schema;
 
 const questionSchema = new Schema({
     question_id: { type: Number, unique: true },
-    questionArray: [{ type: String, required: true }]
+    questionArray: { type: [String], required: true, validate: [isValidQuestionArray] }
 },{collection: 'question'});
+
+function isValidQuestionArray(arr){
+    var nbtext = 0;
+    var nbrep = 0;
+    arr.forEach((val) => { if(!val){ nbrep++; } else{ nbtext++; }});
+    if(nbtext >= 1 && nbrep >= 1){ return true }
+    return false;
+}
 
 questionSchema.pre("save", function(next){
     if(this.isNew){

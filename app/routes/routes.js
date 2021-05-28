@@ -7,13 +7,18 @@ const Serveur = require('../controllers/serveur/serveur');
 const Point = require('../controllers/point/point');
 const User = require('../controllers/user/user');
 
-router.get('/', (req, res) => res.send({'content': "Bienvenu sur l'API LimiteJs"}))
+router.get('/', (req, res) => res.send({
+    message: "Bienvenu sur l'API LimiteJs",
+    version: process.env.npm_package_version,
+    author: process.env.npm_package_author_name,
+    library: 'Node.js'
+}));
 
 //Question Route
-/*router.post('/question/create', Question.create);
-router.delete('/question/delete', Question.delete);
-router.get('/question/find', Question.find);
-router.get('/question/find/:id', Question.findById);*/
+router.post('/question/create', Question.create);
+router.delete('/question/delete/:id', Question.delete);
+router.get('/question/findonerandomly', Question.findOneRandomly);
+router.get('/question/find/:id', Question.findById);
 
 //Reponse Route
 router.post('/reponse/create', Reponse.create);
