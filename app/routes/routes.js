@@ -29,10 +29,13 @@ router.get('/reponse/find/:id', Reponse.findById);
 //Serveur Route
 router.post('/serveur/create', Serveur.create);
 router.delete('/serveur/delete/:id', Serveur.delete);
-router.patch('/serveur/addmember/:server_id/:user_id', Serveur.addMember);
+router.post('/serveur/addmember/:server_id/:user_id', Serveur.addMember);
 router.delete('/serveur/delmember/:server_id/:user_id', Serveur.delMember);
-router.get('/serveur/find', Serveur.find);
+router.patch('/serveur/update/:id', Serveur.update);
+//router.get('/serveur/find', Serveur.find);
 router.get('/serveur/find/:id', Serveur.findById);
+router.get('/serveur/count', Serveur.count);
+
 
 //Point Route
 router.patch('/point/addwin/:id', Point.addWin);
@@ -43,7 +46,8 @@ router.get('/point/find/:server_id/:user_id', Point.findPoint);
 router.post('/user/create', User.create);
 router.delete('/user/delete/:id', User.delete);
 router.patch('/user/update/:id', User.update);
-router.get('/user/find', User.find);
+//router.get('/user/find', User.find);
 router.get('/user/find/:id', User.findById);
+router.get('/user/count', User.count);
 
 module.exports = router;

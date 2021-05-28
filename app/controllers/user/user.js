@@ -43,7 +43,7 @@ module.exports = {
             res.status(500).json({message: 'Update failed. Invalid parameters.'});
         });
     },
-    find : async (req, res) => {
+    /*find : async (req, res) => {
         await User.find({},{__v:0})
             .then((result) => {
                 if(result.length == 0){
@@ -56,7 +56,7 @@ module.exports = {
             .catch(() => {
                 res.status(500).json({message: 'Invalid parameters.'});
         });
-    },
+    },*/
     findById : async (req, res) => {
         await User.findById(req.params.id, {__v:0})
             .then((result) => {
@@ -69,6 +69,11 @@ module.exports = {
             })
             .catch(() => {
                 res.status(500).json({message: 'Invalid parameters.'});
+        });
+    },
+    count : async (req, res) => {
+        await User.countDocuments({}).then((result) => {
+            res.status(200).json({count: result});
         });
     }
 }

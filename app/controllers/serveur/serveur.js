@@ -87,7 +87,15 @@ module.exports = {
             res.status(500).json({message: 'Invalid Server or User id.'});
         });
     },
-    find : async (req, res) => {
+    update : async (req, res) => {
+        await Serveur.findByIdAndUpdate(req.params.id, req.body).then(() => {
+            res.status(500).json({message: 'Serveur updated.'});
+        })
+        .catch((err) => {
+            res.status(500).json({message: 'Update failed. Invalid parameters.'});
+        });
+    },
+    /*find : async (req, res) => {
         await Serveur.find({},{ __v:0})
             .then((result) => {
                 if(result.length == 0){
@@ -100,7 +108,7 @@ module.exports = {
             .catch(() => {
                 res.status(500).json({message: 'Invalid parameters.'});
         });
-    },
+    },*/
     findById : async (req, res) => {
         await Serveur.findById(req.params.id, { __v:0})
             .then((result) => {
@@ -113,6 +121,11 @@ module.exports = {
             })
             .catch(() => {
                 res.status(500).json({message: 'Invalid parameters.'});
+        });
+    },
+    count : async (req, res) => {
+        await Serveur.countDocuments({}).then((result) => {
+            res.status(200).json({count: result});
         });
     }
 }
