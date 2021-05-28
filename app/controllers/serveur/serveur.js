@@ -5,8 +5,11 @@ const User = require('../../models/user');
 module.exports = {
     create : async (req, res) => {
         //Add Serveur
-        await new Serveur(req.body).save().then(() => {
-            res.status(200).json({message: 'Server added.'});
+        await new Serveur(req.body).save().then((result) => {
+            res.status(200).json({
+                message: 'Server added.',
+                _id: result._id
+            });
         }).catch((err) => {
             res.status(500).json({message: 'Server already exist or invalid parameters.'});
         })
