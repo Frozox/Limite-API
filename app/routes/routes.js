@@ -19,12 +19,14 @@ router.post('/question/create', Question.create);
 router.delete('/question/delete/:id', Question.delete);
 router.get('/question/findonerandomly', Question.findOneRandomly);
 router.get('/question/find/:id', Question.findById);
+router.get('/question/count', Question.count);
 
 //Reponse Route
 router.post('/reponse/create', Reponse.create);
 router.delete('/reponse/delete/:id', Reponse.delete);
 router.get('/reponse/findrandomly', Reponse.findRandomly);
 router.get('/reponse/find/:id', Reponse.findById);
+router.get('/reponse/count', Reponse.count);
 
 //Serveur Route
 router.post('/serveur/create', Serveur.create);
