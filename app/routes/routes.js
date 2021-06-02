@@ -1,5 +1,6 @@
 const express = require('express');
 const router = new express.Router;
+const { MESSAGES } = require('../util/constants');
 
 const Question = require('../controllers/question/question');
 const Reponse = require('../controllers/reponse/reponse');
@@ -8,10 +9,11 @@ const Point = require('../controllers/point/point');
 const User = require('../controllers/user/user');
 
 router.get('/', (req, res) => res.send({
-    message: "Bienvenu sur l'API LimiteJs",
-    version: process.env.npm_package_version,
-    author: process.env.npm_package_author_name,
-    library: 'Node.js'
+    message: MESSAGES.infos.message,
+    version: MESSAGES.infos.version,
+    author: MESSAGES.infos.author,
+    library: MESSAGES.infos.library,
+    uptime: MESSAGES.infos.uptime
 }));
 
 //Question Route
