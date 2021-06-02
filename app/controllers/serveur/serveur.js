@@ -15,6 +15,20 @@ module.exports = {
             res.status(500).json({ message: MESSAGES.models.serveur.create[500] });
         })
     },
+    createIfNotExists: async (req, res) => {
+        await Serveur.find({ server_id: { $in: req.body } }).distinct('server_id').then((result) => {
+            //Récupérer les serveurs à ajouter 
+            const serveursToAdd = req.body.filter(x => !result.includes(x)).map(srv => JSON.parse(`{ "server_id": "${srv}" }`));
+            if (serveursToAdd.length > 0) {
+                //Insérer les serveurs manquants
+                Serveur.insertMany(serveursToAdd);
+                res.status(200).json({ message: `${serveursToAdd.length} ${MESSAGES.models.serveur.createIfNotExists[200]}` });
+            }
+            else {
+                res.status(404).json({ message: MESSAGES.models.serveur.createIfNotExists[404] });
+            }
+        })
+    },
     delete: async (req, res) => {
         //Rem Serveur
         const server = await Serveur.findByIdAndDelete(req.params.id);

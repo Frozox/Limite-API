@@ -32,6 +32,7 @@ router.get('/reponse/count', Reponse.count);
 
 //Serveur Route
 router.post('/serveur/create', Serveur.create);
+router.post('/serveur/createifnotexists', Serveur.createIfNotExists);
 router.delete('/serveur/delete/:id', Serveur.delete);
 router.post('/serveur/addmember/:server_id/:user_id', Serveur.addMember);
 router.delete('/serveur/delmember/:server_id/:user_id', Serveur.delMember);

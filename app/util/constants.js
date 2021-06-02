@@ -38,6 +38,10 @@ exports.MESSAGES = {
                 200: 'Server added.',
                 500: 'Server already exist or invalid parameters.'
             },
+            createIfNotExists: {
+                200: "server(s) has(have) been added.",
+                404: "No server added."
+            },
             delete: {
                 200: 'Server deleted.',
                 404: 'Server does not exist or invalid parameters.'
