@@ -6,14 +6,37 @@ const { MESSAGES } = require('../../util/constants');
 module.exports = {
     create: async (req, res) => {
         //Add Serveur
-        await new Serveur(req.body).save().then((result) => {
-            res.status(200).json({
-                message: MESSAGES.models.serveur.create[200],
-                _id: result._id
-            });
-        }).catch((err) => {
+        await new Serveur(req.body).save().then(() => {
+            res.status(200).json({ message: MESSAGES.models.serveur.create[200] });
+        }).catch(() => {
             res.status(500).json({ message: MESSAGES.models.serveur.create[500] });
         })
+    },
+    delete: async (req, res) => {
+        //Rem Serveur
+        const server = await Serveur.findOneAndDelete({ server_id: req.params.id })
+
+        if (server) {
+
+            //Find Point/User
+            await Point.find({ server: server._id }).then((points) => {
+                points.forEach(point => {
+
+                    //Rem Point to User
+                    User.findByIdAndUpdate(point.user, {
+                        $pull: { points: point._id }
+                    }).exec();
+                });
+            });
+
+            //Rem Point
+            await Point.deleteMany({ server: server._id }).exec();
+
+            res.status(200).json({ message: MESSAGES.models.serveur.delete[200] });
+        }
+        else {
+            res.status(404).json({ message: MESSAGES.models.serveur.delete[404] });
+        }
     },
     createIfNotExists: async (req, res) => {
         await Serveur.find({ server_id: { $in: req.body } }).distinct('server_id').then((result) => {
@@ -29,106 +52,112 @@ module.exports = {
             }
         })
     },
-    delete: async (req, res) => {
-        //Rem Serveur
-        const server = await Serveur.findByIdAndDelete(req.params.id);
+    deleteIfNotExists: async (req, res) => {
+        //Récupérer les serveurs à supprimer
+        await Serveur.find({ server_id: { $nin: req.body } }, { _id: 1 }).then((result) => {
+            if (result.length > 0) {
 
-        if (server) {
+                //Supprimer les points des utlisateurs liés au serveur
+                result.forEach((serveurToDelete) => {
+                    Point.find({ server: serveurToDelete._id }).then((points) => {
+                        points.forEach(point => {
 
-            //Find Point/User
-            await Point.find({ server: req.params.id }).then((points) => {
-                points.forEach(point => {
-
-                    //Rem Point to User
-                    User.findByIdAndUpdate(point.user, {
-                        $pull: { points: point._id }
-                    }).exec();
+                            //Rem Point to User
+                            User.findByIdAndUpdate(point.user, {
+                                $pull: { points: point._id }
+                            }).exec();
+                        });
+                    });
+                    Point.deleteMany({ server: serveurToDelete._id }).exec();
                 });
-            });
-
-            //Rem Point
-            await Point.deleteMany({ server: req.params.id }).exec();
-
-            res.status(200).json({ message: MESSAGES.models.serveur.delete[200] });
-        }
-        else {
-            res.status(404).json({ message: MESSAGES.models.serveur.delete[404] });
-        }
+                Serveur.deleteMany({ _id: { $in: result.map(srv => srv._id) } }).exec();
+                res.status(200).json({ message: `${result.length} ${MESSAGES.models.serveur.deleteIfNotExists[200]}` });
+            }
+            else {
+                res.status(404).json({ message: MESSAGES.models.serveur.deleteIfNotExists[404] });
+            }
+        });
     },
     addMember: async (req, res) => {
-        //Add User to Serveur
-        await Serveur.findByIdAndUpdate(req.params.server_id, {
-            $addToSet: { members: req.params.user_id }
-        }).then(() => {
+        const server = await Serveur.findOne({ server_id: req.body.server_id }, { _id: 1 });
+        const user = await User.findOne({ user_id: req.body.user_id }, { _id: 1 });
 
-            //Add Point to Serveur/User
-            Point.create({
-                server: req.params.server_id,
-                user: req.params.user_id
-            }).then((result) => {
+        if (server && user) {
+            //Add User to Serveur
+            await Serveur.findByIdAndUpdate(server, {
+                $addToSet: { members: user._id }
+            }).then(() => {
 
-                //Set Point to User
-                User.findByIdAndUpdate(req.params.user_id, {
-                    $addToSet: { points: result._id }
-                }).then(() => {
-                    res.status(200).json({ message: MESSAGES.models.serveur.addMember[200] });
+                //Add Point to Serveur/User
+                Point.create({
+                    server: server._id,
+                    user: user._id
+                }).then((result) => {
+
+                    //Set Point to User
+                    User.findByIdAndUpdate(user._id, {
+                        $addToSet: { points: result._id }
+                    }).then(() => {
+                        res.status(200).json({ message: MESSAGES.models.serveur.addMember[200] });
+                    });
+                }).catch(() => {
+                    res.status(500).json({ message: MESSAGES.models.serveur.addMember[500] });
                 });
-            }).catch(() => {
-                res.status(500).json({ message: MESSAGES.models.serveur.addMember[500] });
             });
-        }).catch(() => {
+        }
+        else {
             res.status(404).json({ message: MESSAGES.models.serveur.addMember[404] });
-        });
+        }
     },
     delMember: async (req, res) => {
+        const server = await Serveur.findOne({ server_id: req.params.server_id }, { _id: 1 });
+        const user = await User.findOne({ user_id: req.params.user_id }, { _id: 1 });
 
-        //Rem User to Serveur
-        await Serveur.findByIdAndUpdate(req.params.server_id, {
-            $pull: { members: req.params.user_id }
-        }).then(() => {
+        if (server && user) {
+            //Rem User to Serveur
+            await Serveur.findByIdAndUpdate(server, {
+                $pull: { members: user._id }
+            }).then(() => {
 
-            //Rem Point to Serveur/User
-            Point.findOneAndDelete({
-                server: req.params.server_id, user: req.params.user_id
-            }).then((result) => {
-
-                //Rem Point to User
-                User.findByIdAndUpdate(req.params.user_id, {
-                    $pull: { points: result._id }
-                }).then(() => {
-                    res.status(200).json({ message: MESSAGES.models.serveur.delMember[200] });
+                //Rem Point to Serveur/User
+                Point.findOneAndDelete({
+                    server: server._id, user: user._id
+                }).then((result) => {
+                    if (result) {
+                        //Rem Point to User
+                        User.findByIdAndUpdate(user, {
+                            $pull: { points: result._id }
+                        }).then(() => {
+                            res.status(200).json({ message: MESSAGES.models.serveur.delMember[200] });
+                        })
+                    }
+                    else {
+                        res.status(500).json({ message: MESSAGES.models.serveur.delMember[500] });
+                    }
                 });
-            }).catch(() => {
-                res.status(404).json({ message: MESSAGES.models.serveur.delMember[404] });
             });
-        }).catch(() => {
-            res.status(500).json({ message: MESSAGES.models.serveur.delMember[500] });
-        });
+        }
+        else {
+            res.status(404).json({ message: MESSAGES.models.serveur.delMember[404] });
+        }
     },
     update: async (req, res) => {
-        await Serveur.findByIdAndUpdate(req.params.id, req.body).then(() => {
-            res.status(200).json({ message: MESSAGES.models.serveur.update[200] });
-        })
-            .catch((err) => {
-                res.status(500).json({ message: MESSAGES.models.serveur.update[500] });
-            });
-    },
-    /*find : async (req, res) => {
-        await Serveur.find({},{ __v:0})
-            .then((result) => {
-                if(result.length == 0){
-                    res.status(404).json({message: 'Servers not found.'});
-                }
-                else{
-                    res.status(200).json(result);
-                }
+        const server = await Serveur.findOne({ server_id: req.params.id }, { _id: 1 });
+
+        if (server) {
+            await Serveur.findByIdAndUpdate(server._id, req.body).then(() => {
+                res.status(200).json({ message: MESSAGES.models.serveur.update[200] });
             })
-            .catch(() => {
-                res.status(500).json({message: 'Invalid parameters.'});
-        });
-    },*/
+                .catch(() => {
+                    res.status(500).json({ message: MESSAGES.models.serveur.update[500] });
+                });
+        }
+        else {
+            res.status(404).json({ message: MESSAGES.models.serveur.update[404] });
+        }
+    },
     findById: async (req, res) => {
-        await Serveur.findById(req.params.id, { __v: 0 })
+        await Serveur.findOne({ server_id: req.params.id }, { _id: 0, __v: 0 })
             .then((result) => {
                 if (result == null) {
                     res.status(404).json({ message: MESSAGES.models.serveur.findById[404] });

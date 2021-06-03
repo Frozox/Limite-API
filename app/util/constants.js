@@ -38,26 +38,31 @@ exports.MESSAGES = {
                 200: 'Server added.',
                 500: 'Server already exist or invalid parameters.'
             },
-            createIfNotExists: {
-                200: "server(s) has(have) been added.",
-                404: "No server added."
-            },
             delete: {
                 200: 'Server deleted.',
                 404: 'Server does not exist or invalid parameters.'
             },
+            createIfNotExists: {
+                200: "server(s) has(have) been added.",
+                404: "No server added."
+            },
+            deleteIfNotExists: {
+                200: "server(s) has(have) been deleted.",
+                404: "No server removed."
+            },
             addMember: {
                 200: 'Member added to Server.',
                 500: 'Member already in Server.',
-                404: 'Invalid Server or User id.'
+                404: 'Server or User not found.'
             },
             delMember: {
                 200: 'Member removed from Server.',
-                404: 'Member not in Server.',
-                500: 'Invalid Server or User id.'
+                404: 'Server or User not found.',
+                500: 'Member not in Server.'
             },
             update: {
-                200: 'Serveur updated.',
+                200: 'Server updated.',
+                404: 'Server not found.',
                 500: 'Update failed. Invalid parameters.'
             },
             findById: {
@@ -68,15 +73,25 @@ exports.MESSAGES = {
         point: {
             addWin: {
                 200: 'Win added to User.',
-                500: 'Invalid parameters.'
+                500: 'Invalid parameters.',
+                404: [
+                    'Point not found.',
+                    'Server or User not found.'
+                ]
             },
             remWin: {
                 200: 'Win removed to User.',
-                500: 'Invalid parameters.'
+                500: 'Point can\'t be less than zero.',
+                404: [
+                    'Point not found.',
+                    'Server or User not found.'
+                ]
             },
             findPoint: {
-                404: 'Point not found.',
-                500: 'Invalid parameters.'
+                404: [
+                    'Point not found.',
+                    'Server or User not found.'
+                ]
             }
         },
         user: {
@@ -90,6 +105,7 @@ exports.MESSAGES = {
             },
             update: {
                 200: 'User updated.',
+                404: 'User not found.',
                 500: 'Update failed. Invalid parameters.'
             },
             findById: {
