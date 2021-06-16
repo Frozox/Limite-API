@@ -118,7 +118,7 @@ exports.MESSAGES = {
         message: 'Bienvenu sur l\'API LimiteJs',
         version: process.env.npm_package_version,
         author: process.env.npm_package_author_name,
-        library: 'Node.js',
+        library: 'Express.js',
         uptime: dateformat(new Date(), 'dd-mm-yyyy')
     }
 }

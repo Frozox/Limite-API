@@ -156,6 +156,12 @@ module.exports = {
             res.status(404).json({ message: MESSAGES.models.serveur.update[404] });
         }
     },
+    getAllPrefix: async (req, res) => {
+        await Serveur.find({}, { server_id: 1, prefix: 1, _id: 0 }).then((result) => {
+            const dictResult = result.map(r => JSON.parse(`{"key": "${r.server_id}", "val": "${r.prefix}"}`));
+            res.status(200).json(dictResult);
+        });
+    },
     findById: async (req, res) => {
         await Serveur.findOne({ server_id: req.params.id }, { _id: 0, __v: 0 })
             .then((result) => {

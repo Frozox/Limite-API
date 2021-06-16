@@ -38,6 +38,7 @@ router.delete('/serveur/deleteifnotexists', Serveur.deleteIfNotExists);
 router.post('/serveur/addmember', Serveur.addMember);
 router.delete('/serveur/delmember/:server_id/:user_id', Serveur.delMember);
 router.patch('/serveur/update/:id', Serveur.update);
+router.get('/serveur/getallprefix', Serveur.getAllPrefix);
 router.get('/serveur/find/:id', Serveur.findById);
 router.get('/serveur/count', Serveur.count);
 
